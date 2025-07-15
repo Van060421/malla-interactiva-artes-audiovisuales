@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Malla Interactiva de Van ✨</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fff0f5;
+      margin: 0;
+      padding: 2rem;
+      color: #333;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    h1 {
+      color: #cc3366;
+      margin-bottom: 0.5rem;
+    }
+    .contenedor-horizontal {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 2rem;
+      overflow-x: auto;
+    }
+    .año {
+      min-width: 500px;
+      flex-shrink: 0;
+      background: rgba(255,255,255,0.8);
+      padding: 1rem;
+      border-radius: 1rem;
+      border: 1px solid #f5a8b5;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+    }
+    .año h2 {
+      text-align: center;
+      color: #cc3366;
+    }
+    .cuatris {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .cuatri {
+      background-color: #ffe4ec;
+      border: 2px solid #f7b6c2;
+      border-radius: 1rem;
+      padding: 1rem;
+    }
+    .cuatri h3 {
+      text-align: center;
+      background: #f5a8b5;
+      color: white;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .materia {
+      background-color: #fddde6;
+      border: 1px solid #f5a8b5;
+      padding: 0.8rem;
+      margin: 0.4rem 0;
+      border-radius: 0.7rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+    }
+    .materia:hover {
+      background-color: #fcd3e0;
+    }
+    .materia.completada {
+      background-color: #e89cab;
+      border-color: #cc3366;
+      text-decoration: line-through;
+      color: white;
+    }
+    .materia.bloqueada {
+      background-color: rgba(253, 221, 230, 0.4);
+      border-color: #ccc;
+      color: #999;
+      cursor: not-allowed;
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    footer {
+      margin-top: 3rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🎓 Malla Interactiva de Van 🩷</h1>
+    <p>Click en una materia para marcarla como aprobada. Las que dependan de ella se desbloquean ✨</p>
+  </header>
+<div style="text-align:center; margin-bottom: 1.5rem;">
+  <button onclick="reiniciarMalla()" style="padding: 0.6rem 1.2rem; border:none; background:#f5a8b5; color:white; border-radius:1rem; cursor:pointer; font-weight:bold;">
+    🔄 Reiniciar Malla
+  </button>
+</div>
+  <main>
+    <div id="malla-contenedor" class="contenedor-horizontal"></div>
+  </main>
+
+  <footer>
+    <p>Con amor y código rosa de Peter ✨</p>
+  </footer>
+
+  <script>
+const estructura = {
+  "Primer Año": {
+    "Cuatrimestre 1": [
+      "Lenguaje Audiovisual 1", "Matemática", "Fotografía y Cámara 1",
+      "Historia de las Artes Audiovisuales 1", "Dibujo y sistemas de representación", "Informática"
+    ],
+    "Cuatrimestre 2": [
+      "Lenguaje Audiovisual 2", "Física", "Guión 1", "Introducción a la Economía",
+      "Percepción Audiovisual", "Tecnología Digital", "Trabajo Social Comunitario 1"
+    ]
+  },
+  "Segundo Año": {
+    "Cuatrimestre 3": [
+      "Fotografía y Cámara 2", "Historia de las Artes Audiovisuales 2", "Montaje 1", "Realización 1",
+      "Sonido 1", "Inglés"
+    ],
+    "Cuatrimestre 4": [
+      "Lenguaje Musical", "Guión 2", "Realización 2", "Sonido 2", "Gestión y Producción 1",
+      "Dirección de Arte", "Trabajo Social Comunitario 2"
+    ]
+  },
+  "Tercer Año": {
+    "Cuatrimestre 5": [
+      "Montaje 2", "Estética de los Medios", "Dirección Actoral", "Sociología",
+      "Realización 3", "Gestión y Producción 2", "Inglés Técnico"
+    ],
+    "Cuatrimestre 6": [
+      "Guión 3", "Legislación", "Técnicas de Investigación de Audiencias", "Diseño de Bandas Sonoras 1",
+      "Metodología de investigación", "Trabajo Social Comunitario 3"
+    ]
+  },
+  "Cuarto Año": {
+    "Cuatrimestre 7": [
+      "Nuevas tecnologías Audiovisuales", "Trabajo Final 1: Proyecto de Tesis", "Trabajo Social Comunitario 4"
+    ],
+    "Cuatrimestre 8": [
+      "Trabajo Final 2: Realización y Defensa de Tesis", "Deontología y Ejercicio Profesional"
+    ]
+  }
+};
+
+const dependencias = {
+  "Historia de las Artes Audiovisuales 2": ["Historia de las Artes Audiovisuales 1", "Lenguaje Audiovisual 1"],
+  "Estética de los medios": ["Historia de las Artes Audiovisuales 2"],
+  "Sociología": ["Historia de las Artes Audiovisuales 2"],
+  "Lenguaje Audiovisual 2": ["Lenguaje Audiovisual 1"],
+  "Guión 2": ["Guión 1"],
+  "Fotografía y Cámara 2": ["Fotografía y Cámara 1"],
+  "Montaje 1": ["Lenguaje Audiovisual 1", "Guión 1"],
+  "Realización 1": ["Lenguaje Audiovisual 1"],
+  "Tecnología Digital": ["Fotografía y Cámara 1"],
+  "Dirección de Arte": ["Percepción Audiovisual"],
+  "Sonido 1": ["Física"],
+  "Sonido 2": ["Sonido 1"],
+  "Dirección Actoral 1": ["Realización 1"],
+  "Realización 2": ["Realización 1", "Fotografía y Cámara 2"],
+  "Realización 3": ["Realización 2"],
+  "Montaje 2": ["Montaje 1"],
+  "Diseño de Bandas Sonoras 1": ["Sonido 2", "Lenguaje Musical"],
+  "Guión 3": ["Guión 2"],
+  "Técnicas de Investigación de Audiencias": ["Gestión y Producción 1"],
+  "Gestión y Producción 2": ["Gestión y Producción 1"],
+  "Legislación": ["Gestión y Producción 2"],
+  "Metodología de investigación": ["Sociología"],
+  "Trabajo Final 1: Proyecto de Tesis": ["Técnicas de Investigación de Audiencias", "Metodología de investigación"],
+  "Trabajo Final 2: Realización y Defensa de Tesis": ["Trabajo Final 1: Proyecto de Tesis"],
+  "Deontología y Ejercicio Profesional": ["Legislación", "Sociología"],
+  "Trabajo Social Comunitario 2": ["Trabajo Social Comunitario 1"],
+  "Trabajo Social Comunitario 3": ["Trabajo Social Comunitario 2"],
+  "Trabajo Social Comunitario 4": ["Trabajo Social Comunitario 3"],
+  "Inglés Técnico": ["Inglés"],
+  "Nuevas Técnologías Audiovisuales": ["Montaje 2", "Bandas Sonoras 1"]
+};
+
+const estados = JSON.parse(localStorage.getItem("estadoMallaVan")) || {};
+
+function guardarEstado() {
+  localStorage.setItem("estadoMallaVan", JSON.stringify(estados));
+}
+
+function crearMalla() {
+  const contenedor = document.getElementById("malla-contenedor");
+  contenedor.innerHTML = "";
+
+  for (const año in estructura) {
+    const divAño = document.createElement("div");
+    divAño.className = "año";
+    divAño.innerHTML = `<h2>${año}</h2><div class="cuatris"></div>`;
+    const cuatrisDiv = divAño.querySelector(".cuatris");
+
+    for (const cuatri in estructura[año]) {
+      const divCuatri = document.createElement("div");
+      divCuatri.className = "cuatri";
+      divCuatri.innerHTML = `<h3>${cuatri}</h3>`;
+      estructura[año][cuatri].forEach(materia => {
+        const divMateria = document.createElement("div");
+        divMateria.className = "materia";
+        divMateria.id = materia;
+        divMateria.textContent = materia;
+        if (estados[materia]) divMateria.classList.add("completada");
+        divCuatri.appendChild(divMateria);
+      });
+      cuatrisDiv.appendChild(divCuatri);
+    }
+
+    contenedor.appendChild(divAño);
+  }
+
+  actualizarBloqueadas();
+}
+
+function actualizarBloqueadas() {
+  for (const materia in dependencias) {
+    const bloqueada = !dependencias[materia].every(m => estados[m]);
+    const el = document.getElementById(materia);
+    if (el) {
+      if (bloqueada && !estados[materia]) el.classList.add("bloqueada");
+      else el.classList.remove("bloqueada");
+    }
+  }
+}
+
+document.addEventListener("click", e => {
+  if (!e.target.classList.contains("materia")) return;
+  if (e.target.classList.contains("bloqueada")) return;
+  const id = e.target.id;
+  estados[id] = !estados[id];
+  guardarEstado();
+  crearMalla();
+});
+function reiniciarMalla() {
+  if (confirm("¿Querés reiniciar toda la malla? Esto borrará tu progreso 🥺")) {
+    localStorage.removeItem("estadoMallaVan");
+    location.reload();
+  }
+}
+
+window.onload = crearMalla;
+</script>
+</body>
+</html>
